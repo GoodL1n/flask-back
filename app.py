@@ -1,16 +1,18 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-
 api = Api(app)
+CORS(app)
+#app.config['CORS_HEADERS'] = 'Content-Type'
 
 pg_user = "postgres"
-pg_pwd = "123"
+pg_pwd = "24gkhb"
 pg_port = "5432"
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://{username}:{password}@localhost:{port}/flask_back".format(username=pg_user, password=pg_pwd, port=pg_port)
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://{username}:{password}@localhost:{port}/web_project_db".format(username=pg_user, password=pg_pwd, port=pg_port)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'some-secret-string'
 
@@ -40,7 +42,10 @@ api.add_resource(resources.UserLogoutAccess, '/logout/access')
 api.add_resource(resources.UserLogoutRefresh, '/logout/refresh')
 api.add_resource(resources.TokenRefresh, '/token/refresh')
 api.add_resource(resources.AllUsers, '/users')
-api.add_resource(resources.SecretResource, '/secret')
+api.add_resource(resources.AllCustomers, '/customers')
+# api.add_resource(resources.AllCitys, '/cities')
+# api.add_resource(resources.AllAddress, '/address')
+# api.add_resource(resources.AllCountrys, '/countries')
 
 
 if __name__ == '__main__':
