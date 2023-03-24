@@ -1,6 +1,7 @@
 from flask import make_response, jsonify
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt)
 from flask_restful import Resource, reqparse
+from sqlalchemy import func
 
 from app import db
 from models import UserModel, RevokedTokenModel, CustomerModel, AddressModel, CityModel, CountryModel
@@ -198,3 +199,20 @@ class SecretResource(Resource):
     def get(self):
         data = [{'id': 12, 'uid': 32}]
         return jsonify(data)
+
+class CountCities(Resource):
+    def get(self):
+        def to_json(x):
+            return {
+                'count': x.count,
+                'country': x.country
+            }
+
+        query = db.session.query(func.count(CityModel.city).label('count'), CountryModel.country)
+        query = query.join(CityModel, CityModel.country_id == CountryModel.country_id)
+        query = query.group_by(CountryModel.country)\
+            .order_by(CountryModel.country)
+        records = query.all()
+
+        print(records)
+        return jsonify(list(map(lambda x: to_json(x), records)))

@@ -46,6 +46,7 @@ api.add_resource(resources.AllCustomers, '/customers')
 api.add_resource(resources.AllCities, '/cities')
 api.add_resource(resources.AllAddress, '/address')
 api.add_resource(resources.AllCountries, '/countries')
+api.add_resource(resources.CountCities, '/countcities')
 
 
 if __name__ == '__main__':
