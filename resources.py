@@ -10,10 +10,12 @@ parser.add_argument('username', help='This field cannot be blank', required=True
 parser.add_argument('password', help='This field cannot be blank', required=True)
 parser.add_argument('role', help='This field cannot be blank', required=False)
 
-
-# parser = reqparse.RequestParser()
-# parser.add_argument('username', help='This field cannot be blank', required=True)
-
+customers_parser = reqparse.RequestParser()
+customers_parser.add_argument('customer_id', help='This field cannot be blank', required=True)
+customers_parser.add_argument('first_name', help='This field cannot be blank', required=True)
+customers_parser.add_argument('last_name', help='This field cannot be blank', required=True)
+customers_parser.add_argument('email', help='This field cannot be blank', required=True)
+customers_parser.add_argument('create_date', help='This field cannot be blank', required=True)
 
 class UserRegistration(Resource):
     def post(self):
@@ -106,7 +108,22 @@ class AllUsers(Resource):
 
 
 class AllCustomers(Resource):
-    @jwt_required()
+    def put(self):
+        data = customers_parser.parse_args()
+        if CustomerModel.find_by_customer(data['customer_id']):
+            query = db.session.query(CustomerModel
+                                     ).filter(CustomerModel.customer_id == data['customer_id']
+                                              ).update({
+                'first_name' : data['first_name'],
+                'last_name' : data['last_name'],
+                'email' : data['email'],
+                'create_date' : data['create_date']
+            })
+            db.session.commit()
+            return jsonify(query)
+        else:
+            return {'message': 'Customer with id = {} bot exists'.format(data['customer_id'])}
+
     def get(self):
         def to_json(x):
             return {
@@ -115,7 +132,7 @@ class AllCustomers(Resource):
                 'first_name': x.CustomerModel.first_name,
                 'last_name': x.CustomerModel.last_name,
                 'email': x.CustomerModel.email,
-                'address': x.CustomerModel.address_id,
+                'address_id': x.CustomerModel.address_id,
                 'activebool': x.CustomerModel.activebool,
                 'create_date': str(x.CustomerModel.create_date),
                 'active': x.CustomerModel.active
@@ -129,11 +146,52 @@ class AllCustomers(Resource):
         return jsonify(list(map(lambda x: to_json(x), records)))
 
 
-# class AllAddress(Resource):
-#
-# class AllCitys(Resource):
-#
-# class AllCountrys(Resource):
+class AllAddress(Resource):
+    def get(self):
+        try:
+            def to_json(x):
+                return {
+                    'address_id': x.address_id,
+                    'district': x.district,
+                }
+
+            query = db.session.query(AddressModel)
+            records = query.all()
+            return jsonify(list(map(lambda x: to_json(x), records)))
+        except Exception as e:
+            return {'Message': str(e)}
+
+
+class AllCities(Resource):
+    def get(self):
+        try:
+            def to_json(x):
+                return {
+                    'city_id': x.city_id,
+                    'city': x.city,
+                }
+
+            query = db.session.query(CityModel)
+            records = query.all()
+            return jsonify(list(map(lambda x: to_json(x), records)))
+        except Exception as e:
+            return {'Message': str(e)}
+
+
+class AllCountries(Resource):
+    def get(self):
+        try:
+            def to_json(x):
+                return {
+                    'country_id': x.country_id,
+                    'country': x.country,
+                }
+
+            query = db.session.query(CountryModel)
+            records = query.all()
+            return jsonify(list(map(lambda x: to_json(x), records)))
+        except Exception as e:
+            return {'Message': str(e)}
 
 class SecretResource(Resource):
     @jwt_required()

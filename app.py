@@ -43,9 +43,9 @@ api.add_resource(resources.UserLogoutRefresh, '/logout/refresh')
 api.add_resource(resources.TokenRefresh, '/token/refresh')
 api.add_resource(resources.AllUsers, '/users')
 api.add_resource(resources.AllCustomers, '/customers')
-# api.add_resource(resources.AllCitys, '/cities')
-# api.add_resource(resources.AllAddress, '/address')
-# api.add_resource(resources.AllCountrys, '/countries')
+api.add_resource(resources.AllCities, '/cities')
+api.add_resource(resources.AllAddress, '/address')
+api.add_resource(resources.AllCountries, '/countries')
 
 
 if __name__ == '__main__':

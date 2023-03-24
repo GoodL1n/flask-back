@@ -68,7 +68,7 @@ class CustomerModel(db.Model):
     store_id = db.Column(db.SmallInteger)
     first_name = db.Column(db.String(45))
     last_name = db.Column(db.String(45))
-    email = db.Column(db.String(50))
+    email = db.Column(db.String(120))
     address_id = db.Column(db.SmallInteger, ForeignKey('address.address_id'), nullable=False)
     activebool = db.Column(db.Boolean)
     create_date = db.Column(db.Date)
@@ -78,6 +78,10 @@ class CustomerModel(db.Model):
     def add(self):
         db.session.add(self)
         db.session.commit()
+
+    @classmethod
+    def find_by_customer(cls, customer_id):
+        return cls.query.filter_by(customer_id=customer_id).first()
 
 class AddressModel(db.Model):
     __tablename__ = "address"
